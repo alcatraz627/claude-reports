@@ -73,16 +73,26 @@ bash restyle-report.sh output/ neon
 ## How It Works
 
 ```
-┌──────────────┐      ┌──────────────┐      ┌──────────────────┐
-│   Markdown   │─────▶│  Structured  │─────▶│  Self-Contained  │
-│   (source)   │ parse│    JSON      │render │    HTML Report   │
-└──────────────┘      │  data.json   │      │   (CSS+JS inline)│
-                      └──────┬───────┘      └──────────────────┘
-                             │ restyle
-                      ┌──────▼───────┐
-                      │  Same JSON,  │
-                      │ new style    │──▶ Different HTML
-                      └──────────────┘
+  ┌──────────┐       ┌──────────────┐       ╭───────────╮
+  │ Markdown │──────▶│ LLM / Script │──────▶│ data.json │
+  └──────────┘ parse └──────────────┘       ╰─────┬─────╯
+                                                  │
+                    ┌─────────────────────────────┘
+                    ▼
+  ┌──────────────────┐   ┌─────────────────┐   ┌───────────┐
+  │ generate-html.ts │   │ shared-base.css │   │ shared.js │
+  └────────┬─────────┘   └─────────────────┘   └───────────┘
+           │
+           ├── style = minimal ──▶  ╭──────────────╮
+           ├── style = neon    ──▶  │  index.html  │  (self-contained)
+           ├── style = terminal──▶  ╰──────────────╯
+           └── ...13 styles              │
+                                         │  + data.json saved alongside
+                                         ▼
+                              ┌────────────────────┐
+                              │  restyle-report.sh │──▶ new style,
+                              │  (reuses data.json)│    no re-parse
+                              └────────────────────┘
 ```
 
 ### Input JSON Schema
