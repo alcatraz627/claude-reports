@@ -1,0 +1,7 @@
+node_modules/
+.playwright-mcp/
+*.png
+*.DS_Store
+_*.claude.md
+report-data.tmp.json
+table-data.tmp.json
