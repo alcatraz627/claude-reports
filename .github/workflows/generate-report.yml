@@ -1,0 +1,140 @@
+name: Generate Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      json_data:
+        description: 'Report data as JSON string (matching the ReportData schema)'
+        required: true
+        type: string
+      style:
+        description: 'Visual style to use'
+        required: true
+        type: choice
+        options:
+          - default
+          - minimal
+          - notion
+          - dashboard
+          - data-table
+          - neon
+          - terminal
+          - magazine
+          - jupyter
+          - academic
+          - corporate
+          - feed
+          - slide
+      output_path:
+        description: 'Path under /reports/ on GH Pages (e.g., "my-project" → published at /reports/my-project/)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Write input JSON to file
+        run: |
+          echo '${{ inputs.json_data }}' > /tmp/report-data.json
+          # Validate JSON
+          node -e "JSON.parse(require('fs').readFileSync('/tmp/report-data.json','utf8')); console.log('JSON valid')"
+
+      - name: Generate HTML report
+        run: |
+          SLUG=$(echo "${{ inputs.output_path }}" | sed 's/[^a-zA-Z0-9-]/-/g' | tr '[:upper:]' '[:lower:]')
+          mkdir -p "_site/reports/${SLUG}"
+          npx tsx generate-html.ts /tmp/report-data.json "_site/reports/${SLUG}/index.html" --style "${{ inputs.style }}"
+          echo "REPORT_URL=reports/${SLUG}/index.html" >> "$GITHUB_ENV"
+          echo "REPORT_SLUG=${SLUG}" >> "$GITHUB_ENV"
+
+      - name: Rebuild gallery from existing pages
+        run: |
+          # Fetch existing gh-pages content to preserve gallery + other reports
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          if git show origin/gh-pages:index.html >/dev/null 2>&1; then
+            # Restore gallery and other reports
+            git checkout origin/gh-pages -- index.html gallery/ 2>/dev/null || true
+            [ -f index.html ] && mv index.html _site/
+            [ -d gallery ] && mv gallery/ _site/
+          fi
+          # Restore other reports (don't overwrite the one we just generated)
+          if git show origin/gh-pages:reports/ >/dev/null 2>&1; then
+            git checkout origin/gh-pages -- reports/ 2>/dev/null || true
+            if [ -d reports ]; then
+              for dir in reports/*/; do
+                slug=$(basename "$dir")
+                [ "$slug" = "${{ env.REPORT_SLUG }}" ] && continue
+                cp -r "$dir" "_site/reports/$slug"
+              done
+            fi
+          fi
+
+      - name: Create reports index
+        run: |
+          cat > _site/reports/index.html << 'IDX_EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>claude-reports — Published Reports</title>
+          <style>
+            body { background: #0a0a0f; color: #e0e0e8; font-family: -apple-system, sans-serif; padding: 48px 24px; max-width: 800px; margin: 0 auto; }
+            h1 { margin-bottom: 8px; }
+            p { color: #888; margin-bottom: 32px; }
+            .report { display: block; padding: 16px; margin-bottom: 12px; background: #141420; border: 1px solid #2a2a3a; border-radius: 8px; color: #e0e0e8; text-decoration: none; }
+            .report:hover { border-color: #3b82f6; }
+            .report h3 { margin-bottom: 4px; }
+            .report span { color: #888; font-size: 0.85rem; }
+            a { color: #3b82f6; }
+          </style>
+          </head>
+          <body>
+          <h1>Published Reports</h1>
+          <p>Reports generated via the <a href="https://github.com/alcatraz627/claude-reports">claude-reports</a> pipeline.</p>
+          <div id="reports"></div>
+          <script>
+            // Auto-discover reports by scanning subdirectories
+            // (In a real setup, a manifest.json would be better, but this works for GH Pages)
+            document.getElementById('reports').innerHTML = '<p style="color:#888">Use the GitHub Actions "Generate Report" workflow to publish reports here.</p>';
+          </script>
+          </body>
+          </html>
+          IDX_EOF
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: generate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Print report URL
+        run: |
+          echo "::notice::Report published at: ${{ steps.deployment.outputs.page_url }}${{ env.REPORT_URL }}"
