@@ -1,0 +1,148 @@
+name: Deploy Style Gallery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'generate-html.ts'
+      - 'report.js'
+      - 'shared.js'
+      - 'shared-base.css'
+      - 'styles.css'
+      - 'styles/**'
+      - 'tests/fixture.json'
+      - '.github/workflows/gallery.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Generate all styles
+        run: |
+          mkdir -p _site/gallery
+          npx tsx generate-html.ts tests/fixture.json _site/gallery/ --all-styles
+
+      - name: Build gallery index
+        run: |
+          cat > _site/index.html << 'GALLERY_EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>claude-reports — Style Gallery</title>
+          <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+            :root {
+              --bg: #0a0a0f; --surface: #141420; --border: #2a2a3a;
+              --text: #e0e0e8; --dim: #888; --accent: #3b82f6;
+            }
+            body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+            body.light { --bg: #f8f9fa; --surface: #fff; --border: #e0e0e0; --text: #1a1a2e; --dim: #666; }
+            .header { text-align: center; padding: 48px 20px 32px; }
+            .header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+            .header p { color: var(--dim); font-size: 1rem; }
+            .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; }
+            .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: inherit; display: block; }
+            .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+            .card-preview { height: 180px; background: var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            .card-preview iframe { width: 200%; height: 200%; transform: scale(0.5); transform-origin: top left; border: none; pointer-events: none; }
+            .card-body { padding: 16px; }
+            .card-body h3 { font-size: 1.1rem; margin-bottom: 4px; text-transform: capitalize; }
+            .card-body p { color: var(--dim); font-size: 0.85rem; }
+            .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-right: 6px; }
+            .controls { text-align: center; margin-bottom: 24px; }
+            .controls button { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 0 4px; font-size: 0.9rem; }
+            .controls button:hover { border-color: var(--accent); }
+            .gh-link { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+            .gh-link:hover { text-decoration: underline; }
+          </style>
+          </head>
+          <body>
+          <div class="header">
+            <h1>claude-reports</h1>
+            <p>13 visual styles for markdown-to-HTML reports</p>
+            <br>
+            <a class="gh-link" href="https://github.com/alcatraz627/claude-reports">GitHub Repository</a>
+          </div>
+          <div class="controls">
+            <button onclick="document.body.classList.toggle('light')">Toggle Theme</button>
+          </div>
+          <div class="grid" id="grid"></div>
+          <script>
+            const styles = [
+              { name: 'default', desc: 'Dark sidebar report with accent colors, font/color/width pickers', color: '#3b82f6' },
+              { name: 'minimal', desc: 'Ultra-clean reading-focused layout with maximum whitespace', color: '#6b7280' },
+              { name: 'notion', desc: 'Clean, minimal Notion-style with cards and whitespace', color: '#9b9a97' },
+              { name: 'dashboard', desc: 'Dark analytics dashboard with metric cards and status pills', color: '#3b82f6' },
+              { name: 'data-table', desc: 'Data-heavy spreadsheet layout optimized for tables', color: '#16a34a' },
+              { name: 'neon', desc: 'Cyberpunk neon-glow dark theme with 18 accent presets', color: '#00f0ff' },
+              { name: 'terminal', desc: 'Green-on-black retro terminal with CRT scanlines', color: '#33ff33' },
+              { name: 'magazine', desc: 'Editorial magazine layout with serif typography', color: '#8b2252' },
+              { name: 'jupyter', desc: 'Jupyter notebook with executable-style cells', color: '#f57c00' },
+              { name: 'academic', desc: 'LaTeX-inspired academic paper with serif fonts', color: '#374151' },
+              { name: 'corporate', desc: 'Formal corporate/legal report — print-ready', color: '#0f2b46' },
+              { name: 'feed', desc: 'Social feed layout for narrative data — timeline cards', color: '#1d9bf0' },
+              { name: 'slide', desc: 'Presentation-style with full-viewport sections', color: '#818cf8' },
+            ];
+            const grid = document.getElementById('grid');
+            styles.forEach(s => {
+              const card = document.createElement('a');
+              card.className = 'card';
+              card.href = 'gallery/' + s.name + '/index.html';
+              card.innerHTML = `
+                <div class="card-preview">
+                  <iframe src="gallery/${s.name}/index.html" loading="lazy" sandbox></iframe>
+                </div>
+                <div class="card-body">
+                  <h3><span class="badge" style="background:${s.color};color:#fff">${s.name}</span></h3>
+                  <p>${s.desc}</p>
+                </div>`;
+              grid.appendChild(card);
+            });
+          </script>
+          </body>
+          </html>
+          GALLERY_EOF
+
+      - name: Preserve existing reports
+        run: |
+          # If gh-pages has a reports/ dir, keep it
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          if git show origin/gh-pages:reports/ >/dev/null 2>&1; then
+            git checkout origin/gh-pages -- reports/ 2>/dev/null || true
+            [ -d reports ] && cp -r reports/ _site/reports/
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
