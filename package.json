@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --exclude tests/toolbar.spec.ts",
     "test:watch": "vitest",
     "test:ui": "vitest run tests/static.test.ts",
     "test:playwright": "playwright test tests/toolbar.spec.ts",
