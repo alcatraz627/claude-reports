@@ -1,46 +1,18 @@
 <div align="center">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="128" height="128">
-    <!-- Document with styled layers — represents multi-style report generation -->
-    <!-- Back layer (neon) -->
-    <rect x="16" y="4" width="36" height="44" rx="2" fill="#0a0a1a" stroke="#00f0ff" stroke-width="1"/>
-    <rect x="20" y="8" width="12" height="2" fill="#00f0ff"/>
-    <rect x="20" y="12" width="28" height="1" fill="#1a1a3a"/>
-    <rect x="20" y="15" width="28" height="1" fill="#1a1a3a"/>
-    <rect x="20" y="18" width="20" height="1" fill="#1a1a3a"/>
-    <!-- Middle layer (notion) -->
-    <rect x="10" y="10" width="36" height="44" rx="2" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
-    <rect x="14" y="14" width="14" height="2" fill="#333"/>
-    <rect x="14" y="18" width="28" height="1" fill="#eee"/>
-    <rect x="14" y="21" width="28" height="1" fill="#eee"/>
-    <rect x="14" y="24" width="22" height="1" fill="#eee"/>
-    <!-- Front layer (terminal) -->
-    <rect x="4" y="16" width="36" height="44" rx="2" fill="#0a0a0a" stroke="#33ff33" stroke-width="1"/>
-    <rect x="4" y="16" width="36" height="6" rx="2" fill="#1a1a1a"/>
-    <circle cx="8" cy="19" r="1.5" fill="#ff5f56"/>
-    <circle cx="13" cy="19" r="1.5" fill="#ffbd2e"/>
-    <circle cx="18" cy="19" r="1.5" fill="#27c93f"/>
-    <rect x="8" y="26" width="6" height="2" fill="#33ff33"/>
-    <rect x="16" y="26" width="18" height="2" fill="#33ff33" opacity="0.5"/>
-    <rect x="8" y="30" width="24" height="1" fill="#33ff33" opacity="0.3"/>
-    <rect x="8" y="33" width="20" height="1" fill="#33ff33" opacity="0.3"/>
-    <rect x="8" y="36" width="28" height="1" fill="#33ff33" opacity="0.3"/>
-    <!-- Style switcher arrow -->
-    <polygon points="48,36 56,42 48,48" fill="#3b82f6" opacity="0.8"/>
-    <polygon points="50,38 55,42 50,46" fill="#60a5fa"/>
-  </svg>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a1a,50:3b82f6,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=e0e0e8&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=888&descAlignY=55&animation=fadeIn" />
+    <source media="(prefers-color-scheme: light)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:3b82f6,50:818cf8,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=f0f0f0&descAlignY=55&animation=fadeIn" />
+    <img alt="claude-reports banner" src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a1a,50:3b82f6,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=e0e0e8&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=888&descAlignY=55&animation=fadeIn" />
+  </picture>
 </div>
-
-<h1 align="center">claude-reports</h1>
-
-<p align="center">
-  Markdown-to-HTML report generator with 13 visual styles — self-contained, zero-dependency output.
-</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white" alt="Node.js" />
   <img src="https://img.shields.io/badge/styles-13-blue" alt="13 Styles" />
   <img src="https://img.shields.io/badge/output-self--contained_HTML-green" alt="Self-contained" />
+  <br />
+  <a href="https://alcatraz627.github.io/claude-reports/">📖 Style Gallery</a> · <a href="https://github.com/alcatraz627/claude-reports/actions/workflows/generate-report.yml">🚀 Generate a Report</a>
 </p>
 
 ---
@@ -129,21 +101,32 @@ The generator expects a JSON file with this structure:
 
 ## Styles
 
-| Style | Description |
-|-------|-------------|
-| `default` | Dark sidebar report with accent colors, font/color/width pickers |
-| `minimal` | Ultra-clean reading-focused layout with maximum whitespace |
-| `notion` | Clean, minimal Notion-style with cards and whitespace |
-| `dashboard` | Dark analytics dashboard with metric cards and status pills |
-| `data-table` | Data-heavy spreadsheet layout optimized for tables |
-| `neon` | Cyberpunk neon-glow dark theme with 18 accent color presets |
-| `terminal` | Green-on-black retro terminal with CRT scanlines |
-| `magazine` | Editorial magazine layout with serif typography and hero header |
-| `jupyter` | Jupyter notebook with executable-style cells |
-| `academic` | LaTeX-inspired academic paper with serif fonts and numbered sections |
-| `corporate` | Formal corporate/legal report — print-ready, numbered sections |
-| `feed` | Social feed layout for narrative data — timeline cards |
-| `slide` | Presentation-style with full-viewport sections and arrow key navigation |
+<table>
+<tr>
+<td align="center" width="33%"><strong>default</strong><br/><img src="previews/default.png" width="280" alt="default style"/><br/><sub>Dark sidebar with accent colors, font/color/width pickers</sub></td>
+<td align="center" width="33%"><strong>minimal</strong><br/><img src="previews/minimal.png" width="280" alt="minimal style"/><br/><sub>Ultra-clean reading-focused layout with maximum whitespace</sub></td>
+<td align="center" width="33%"><strong>notion</strong><br/><img src="previews/notion.png" width="280" alt="notion style"/><br/><sub>Clean, minimal Notion-style with cards and whitespace</sub></td>
+</tr>
+<tr>
+<td align="center"><strong>dashboard</strong><br/><img src="previews/dashboard.png" width="280" alt="dashboard style"/><br/><sub>Dark analytics dashboard with metric cards and status pills</sub></td>
+<td align="center"><strong>data-table</strong><br/><img src="previews/data-table.png" width="280" alt="data-table style"/><br/><sub>Data-heavy spreadsheet layout optimized for tables</sub></td>
+<td align="center"><strong>neon</strong><br/><img src="previews/neon.png" width="280" alt="neon style"/><br/><sub>Cyberpunk neon-glow dark theme with 18 accent presets</sub></td>
+</tr>
+<tr>
+<td align="center"><strong>terminal</strong><br/><img src="previews/terminal.png" width="280" alt="terminal style"/><br/><sub>Green-on-black retro terminal with CRT scanlines</sub></td>
+<td align="center"><strong>magazine</strong><br/><img src="previews/magazine.png" width="280" alt="magazine style"/><br/><sub>Editorial magazine layout with serif typography</sub></td>
+<td align="center"><strong>jupyter</strong><br/><img src="previews/jupyter.png" width="280" alt="jupyter style"/><br/><sub>Jupyter notebook with executable-style cells</sub></td>
+</tr>
+<tr>
+<td align="center"><strong>academic</strong><br/><img src="previews/academic.png" width="280" alt="academic style"/><br/><sub>LaTeX-inspired academic paper with serif fonts</sub></td>
+<td align="center"><strong>corporate</strong><br/><img src="previews/corporate.png" width="280" alt="corporate style"/><br/><sub>Formal corporate/legal report — print-ready</sub></td>
+<td align="center"><strong>feed</strong><br/><img src="previews/feed.png" width="280" alt="feed style"/><br/><sub>Social feed layout for narrative data — timeline cards</sub></td>
+</tr>
+<tr>
+<td align="center"><strong>slide</strong><br/><img src="previews/slide.png" width="280" alt="slide style"/><br/><sub>Presentation-style with full-viewport sections</sub></td>
+<td align="center" colspan="2"><em>Browse all styles live in the <a href="https://alcatraz627.github.io/claude-reports/">Style Gallery</a></em></td>
+</tr>
+</table>
 
 Every style includes:
 - **Dark/light mode toggle** with localStorage persistence
