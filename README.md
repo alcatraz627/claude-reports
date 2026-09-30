@@ -1,10 +1,8 @@
-<div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a1a,50:3b82f6,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=e0e0e8&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=888&descAlignY=55&animation=fadeIn" />
-    <source media="(prefers-color-scheme: light)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:3b82f6,50:818cf8,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=ffffff&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=f0f0f0&descAlignY=55&animation=fadeIn" />
-    <img alt="claude-reports banner" src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a1a,50:3b82f6,100:00f0ff&height=200&section=header&text=claude-reports&fontSize=42&fontColor=e0e0e8&fontAlignY=35&desc=13%20visual%20styles%20for%20markdown-to-HTML%20reports&descSize=16&descColor=888&descAlignY=55&animation=fadeIn" />
-  </picture>
-</div>
+<p align="center">
+  <img src=".github/readme/banner.svg" alt="claude-reports banner: The restyle slot machine" width="100%">
+</p>
+
+# <img src=".github/readme/favicon.svg" alt="" width="32" height="32"> claude-reports
 
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
@@ -16,6 +14,13 @@
 </p>
 
 ---
+
+<details>
+<summary>Riddle answer</summary>
+
+The data.json saved next to every report: restyle-report.sh reuses it to switch to any of the 13 styles without parsing the markdown again.
+
+</details>
 
 ## About
 
@@ -98,6 +103,10 @@ The generator expects a JSON file with this structure:
 ```
 
 **Supported block types:** `paragraph`, `code`, `table`, `ul`, `ol`, `blockquote`, `hr`, `math`, `tree`, `subsection`, `subsubsection`
+
+<p align="center">
+  <img src=".github/readme/art-1.svg" alt="claude-reports artwork" width="100%">
+</p>
 
 ## Styles
 
@@ -262,3 +271,9 @@ Contributions are welcome! Please open an issue or pull request.
 ## License
 
 This project is open source.
+
+---
+
+<p align="center">
+  <img src=".github/readme/art-2.svg" alt="claude-reports artwork" width="100%">
+</p>
